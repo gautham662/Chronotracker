@@ -271,3 +271,268 @@ button {
   font-size: 1.5rem;
   margin-bottom: 2px;
 }
+
+/* Gauge Bar Styles */
+.gauge-container {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+
+.gauge-segments {
+  display: flex;
+  justify-content: space-between;
+  height: 40px;
+  gap: 2px;
+}
+
+.gauge-segment {
+  flex: 1;
+  border-radius: 2px;
+  background-color: var(--border-color); /* empty */
+}
+
+.segment-red { background-color: var(--danger); }
+.segment-yellow { background-color: var(--warning); }
+.segment-green { background-color: var(--success); }
+
+.gauge-text {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  text-align: right;
+}
+
+/* Level Badge Styles */
+.level-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: var(--radius-full);
+  font-size: 0.8rem;
+  font-weight: 700;
+  gap: 4px;
+}
+
+/* Skills Page & Card Styles */
+.dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.dashboard-header .add-btn {
+  font-size: 1.5rem;
+  color: var(--primary);
+  background: none;
+  border: none;
+  padding: 0;
+}
+
+.skills-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding-bottom: 80px; /* Space for FAB */
+}
+
+.skill-card {
+  background: var(--bg-card);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.skill-card.locked {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.skill-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.skill-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.skill-card-footer {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  margin-top: 8px;
+  gap: 8px;
+}
+
+.priority-circle {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background-color: var(--primary);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: bold;
+}
+
+.hours-text {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.fab-add {
+  position: absolute;
+  bottom: calc(var(--tabbar-height) + 20px);
+  right: 20px;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background-color: var(--primary);
+  color: white;
+  font-size: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8px 16px rgba(249, 115, 22, 0.4);
+  z-index: 40;
+}
+
+.lock-overlay {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(255,255,255,0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  color: var(--danger);
+}
+
+/* Timer Page Styles */
+.timer-header {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.timer-title {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.timer-display {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 40px;
+}
+
+.time-text {
+  font-size: 4rem;
+  font-weight: 700;
+  color: var(--primary);
+  line-height: 1;
+  margin-bottom: 24px;
+}
+
+/* Very simple hourglass drawing using CSS borders */
+.hourglass {
+  position: relative;
+  width: 120px;
+  height: 180px;
+  margin-bottom: 24px;
+}
+
+.hourglass-top {
+  position: absolute;
+  top: 0; left: 0;
+  width: 0; height: 0;
+  border-left: 60px solid transparent;
+  border-right: 60px solid transparent;
+  border-top: 90px solid var(--primary);
+}
+
+.hourglass-bottom {
+  position: absolute;
+  bottom: 0; left: 0;
+  width: 0; height: 0;
+  border-left: 60px solid transparent;
+  border-right: 60px solid transparent;
+  border-bottom: 90px solid var(--primary);
+}
+
+.timer-controls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 24px;
+}
+
+.control-btn {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background-color: var(--primary-light);
+  color: var(--primary);
+  font-size: 1.5rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+
+.control-btn.main {
+  width: 80px;
+  height: 80px;
+  background-color: var(--primary);
+  color: white;
+  font-size: 2rem;
+  box-shadow: 0 8px 12px rgba(249, 115, 22, 0.3);
+}
+
+/* Priority Selector */
+.priority-selector {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: white;
+  padding: 16px;
+  border-radius: var(--radius-lg);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  margin-top: 24px;
+}
+
+.priority-label {
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+.priority-dots {
+  display: flex;
+  gap: 8px;
+}
+
+.priority-dot {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--border-color);
+  cursor: pointer;
+}
+
+.priority-dot.active {
+  background: var(--primary);
+}
