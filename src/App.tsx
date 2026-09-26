@@ -7,10 +7,8 @@ import SignupPage from './pages/SignupPage';
 import LoginPage from './pages/LoginPage';
 import SkillsPage from './pages/SkillsPage';
 import SkillTimerPage from './pages/SkillTimerPage';
+import ProfilePage from './pages/ProfilePage';
 import './App.css';
-
-// Placeholder Pages for Phase 3 before Phase 4 & 5 implementation
-const ProfilePage = () => <div className="page-content"><h1>Profile</h1></div>;
 
 // Layout with TabBar
 const MainLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => (
@@ -29,7 +27,7 @@ const App: React.FC = () => {
           <Route path="/signup" element={<SignupPage />} />
           <Route path="/login" element={<LoginPage />} />
 
-          {/* Protected Routes */}
+           {/* Protected Routes */}
           <Route element={<ProtectedRoute />}>
             <Route path="/skills" element={<MainLayout><SkillsPage /></MainLayout>} />
             <Route path="/skills/:id" element={<div className="app-container"><SkillTimerPage /></div>} />

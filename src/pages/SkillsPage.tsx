@@ -3,11 +3,13 @@ import { api } from '../utils/api';
 import { useAuth } from '../hooks/useAuth';
 import type { Skill } from '../types';
 import SkillCard from '../components/SkillCard';
+import AddSkillModal from '../components/AddSkillModal';
 
 const SkillsPage: React.FC = () => {
   const { user } = useAuth();
   const [skills, setSkills] = useState<Skill[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const fetchSkills = async () => {
     try {
@@ -36,10 +38,7 @@ const SkillsPage: React.FC = () => {
 
   return (
     <div className="page-content">
-      <header className="dashboard-header">
-        <h1 className="app-title">My Skills</h1>
-        <button className="add-btn">+</button>
-      </header>
+   
 
       <div className="skills-grid">
         {skills.map(skill => (
@@ -55,7 +54,13 @@ const SkillsPage: React.FC = () => {
       </div>
       
       {/* Floating Action Button (FAB) as seen in mockups */}
-      <button className="fab-add" onClick={() => alert('Add Skill Modal coming soon')}>+</button>
+      <button className="fab-add" onClick={() => setIsModalOpen(true)}>+</button>
+
+      <AddSkillModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onSuccess={fetchSkills}
+      />
     </div>
   );
 };
