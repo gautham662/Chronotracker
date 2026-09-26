@@ -1,12 +1,12 @@
 import React from 'react';
-import { getLevel, getMilestoneProgress } from '../utils/levels';
+import { getMilestoneProgress } from '../utils/levels';
 
 interface GaugeBarProps {
   totalHoursLogged: number;
   targetHours?: number; // Usually 20 minimum
 }
 
-const GaugeBar: React.FC<GaugeBarProps> = ({ totalHoursLogged, targetHours = 20 }) => {
+const GaugeBar: React.FC<GaugeBarProps> = ({ totalHoursLogged }) => {
   const progress = getMilestoneProgress(totalHoursLogged);
   const { percentage } = progress;
   

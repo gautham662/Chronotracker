@@ -1,4 +1,4 @@
-from pydantic import BaseModel, EmailStr, Field
+from pydantic import BaseModel, Field
 from typing import Optional, List
 from datetime import datetime
 
@@ -12,18 +12,16 @@ from datetime import datetime
 # ==========================================
 class UserBase(BaseModel):
     username: str
-    email: EmailStr
 
 class UserCreate(UserBase):
     password: str = Field(..., min_length=6, description="Password must be at least 6 characters")
 
 class UserLogin(BaseModel):
-    username: str  # Can be username or email in implementation
+    username: str  # Can be username
     password: str
 
 class UserUpdate(BaseModel):
     username: Optional[str] = None
-    email: Optional[EmailStr] = None
     focus_limit: Optional[int] = Field(None, ge=2, le=10, description="Focus limit must be between 2 and 10")
     avatar_url: Optional[str] = None
 

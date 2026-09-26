@@ -54,7 +54,7 @@ const LoginPage: React.FC = () => {
           <input
             type="text"
             name="username"
-            placeholder="Email Address"
+            placeholder="Username"
             value={formData.username}
             onChange={handleChange}
             required

@@ -8,8 +8,7 @@ const SignupPage: React.FC = () => {
   const navigate = useNavigate();
   const { login } = useAuth();
   const [formData, setFormData] = useState({
-    fullName: '',
-    email: '',
+    username: '',
     password: '',
     confirmPassword: '',
   });
@@ -32,8 +31,7 @@ const SignupPage: React.FC = () => {
     setLoading(true);
     try {
       const response = await api.post('/auth/signup', {
-        username: formData.fullName.trim() || formData.email.split('@')[0],
-        email: formData.email,
+        username: formData.username.trim(),
         password: formData.password,
       });
       await login(response.data.access_token);
@@ -58,19 +56,9 @@ const SignupPage: React.FC = () => {
         <div className="form-group">
           <input
             type="text"
-            name="fullName"
-            placeholder="Full Name"
-            value={formData.fullName}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div className="form-group">
-          <input
-            type="email"
-            name="email"
-            placeholder="Email Address"
-            value={formData.email}
+            name="username"
+            placeholder="Username"
+            value={formData.username}
             onChange={handleChange}
             required
           />

@@ -1,4 +1,4 @@
-import { LevelInfo } from '../types';
+import type { LevelInfo } from '../types';
 
 export const LEVELS = [
   { name: 'Newbie', badge: '🟢', color: '#22c55e', minHours: 0 },

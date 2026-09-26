@@ -16,25 +16,18 @@ router = APIRouter(prefix="/auth", tags=["Authentication"])
 
 @router.post("/signup", response_model=schemas.Token, status_code=status.HTTP_201_CREATED)
 def signup(user_in: schemas.UserCreate, db: Session = Depends(get_db)):
-    # Check if username or email already exists
+    # Check if username already exists
     db_user_username = db.query(models.User).filter(models.User.username == user_in.username).first()
     if db_user_username:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Username already registered"
         )
-    db_user_email = db.query(models.User).filter(models.User.email == user_in.email).first()
-    if db_user_email:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Email already registered"
-        )
 
     # Create new user and write to DB
     hashed_password = auth.get_password_hash(user_in.password)
     db_user = models.User(
         username=user_in.username,
-        email=user_in.email,
         password_hash=hashed_password,
         focus_limit=3  # Standard focus limit (user can focus on 3 skills simultaneously)
     )
@@ -49,10 +42,8 @@ def signup(user_in: schemas.UserCreate, db: Session = Depends(get_db)):
 
 @router.post("/login", response_model=schemas.Token)
 def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
-    # Authenticate credentials. The form_data.username will represent username or email.
-    user = db.query(models.User).filter(
-        (models.User.username == form_data.username) | (models.User.email == form_data.username)
-    ).first()
+    # Authenticate credentials
+    user = db.query(models.User).filter(models.User.username == form_data.username).first()
     
     if not user or not auth.verify_password(form_data.password, user.password_hash):
         raise HTTPException(
@@ -91,14 +82,6 @@ def update_user_profile(
         if collision:
             raise HTTPException(status_code=400, detail="Username already in use")
         current_user.username = user_update.username
-        
-    if user_update.email is not None:
-        collision = db.query(models.User).filter(
-            models.User.email == user_update.email, models.User.id != current_user.id
-        ).first()
-        if collision:
-            raise HTTPException(status_code=400, detail="Email already in use")
-        current_user.email = user_update.email
         
     if user_update.focus_limit is not None:
         current_user.focus_limit = user_update.focus_limit
