@@ -98,7 +98,8 @@ const SkillTimerPage: React.FC = () => {
       ) : (
         <>
           <Timer 
-            timeRemaining={timeRemaining} 
+            timeRemaining={timeRemaining}
+            focusMinutes={skill.focus_minutes}
             state={state} 
             onStart={start} 
             onPause={pause} 

@@ -396,16 +396,17 @@ button {
   position: absolute;
   bottom: calc(var(--tabbar-height) + 20px);
   right: 20px;
-  width: 56px;
-  height: 56px;
+  width: 50px;
+  height: 50px;
   border-radius: 50%;
   background-color: var(--primary);
-  color: white;
-  font-size: 2rem;
+  color: rgb(255, 255, 255);
+  font-size: 3rem;
   display: flex;
   align-items: center;
   justify-content: center;
   box-shadow: 0 8px 16px rgba(249, 115, 22, 0.4);
+  padding-bottom: 10px;
   z-index: 40;
 }
 
@@ -447,7 +448,7 @@ button {
   margin-bottom: 24px;
 }
 
-/* Very simple hourglass drawing using CSS borders */
+/* Hourglass — same orange triangle shape, sand drains top → fills bottom */
 .hourglass {
   position: relative;
   width: 120px;
@@ -455,22 +456,104 @@ button {
   margin-bottom: 24px;
 }
 
+/* clip-path keeps the original triangle look; scale driven by --sand-top / --sand-bottom */
 .hourglass-top {
   position: absolute;
-  top: 0; left: 0;
-  width: 0; height: 0;
-  border-left: 60px solid transparent;
-  border-right: 60px solid transparent;
-  border-top: 90px solid var(--primary);
+  top: 0;
+  left: 0;
+  width: 120px;
+  height: 90px;
+  background: var(--primary);
+  clip-path: polygon(50% 100%, 0% 0%, 100% 0%);
+  transform-origin: bottom center;
+  transform: scaleY(var(--sand-top, 1));
+  transition: transform 1s linear;
 }
 
 .hourglass-bottom {
   position: absolute;
-  bottom: 0; left: 0;
-  width: 0; height: 0;
-  border-left: 60px solid transparent;
-  border-right: 60px solid transparent;
-  border-bottom: 90px solid var(--primary);
+  bottom: 0;
+  left: 0;
+  width: 120px;
+  height: 90px;
+  background: var(--primary);
+  clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+  transform-origin: bottom center;
+  transform: scaleY(var(--sand-bottom, 0));
+  transition: transform 1s linear;
+}
+
+/* Sand stream: spans neck → rising sand surface in the lower chamber */
+.sand-stream {
+  position: absolute;
+  left: 50%;
+  top: 90px;
+  width: 8px;
+  height: var(--stream-height, 0);
+  transform: translateX(-50%);
+  pointer-events: none;
+  z-index: 2;
+  transition: height 1s linear;
+}
+
+/* Faint guide line connecting neck to sand pile */
+.sand-stream::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 0;
+  width: 2px;
+  height: 100%;
+  transform: translateX(-50%);
+  background: linear-gradient(
+    to bottom,
+    var(--primary) 0%,
+    rgba(249, 115, 22, 0.35) 70%,
+    var(--primary) 100%
+  );
+  border-radius: 1px;
+}
+
+/* Individual sand grains falling in staggered segments */
+.sand-grain {
+  position: absolute;
+  left: 50%;
+  width: 4px;
+  height: 6px;
+  transform: translateX(-50%);
+  background: var(--primary);
+  border-radius: 40% 40% 20% 20%;
+  opacity: 0;
+  animation: grainFall 0.55s linear infinite;
+  animation-delay: var(--grain-delay, 0s);
+}
+
+.sand-grain:nth-child(odd) {
+  width: 3px;
+  height: 5px;
+}
+
+.sand-grain:nth-child(3n) {
+  width: 5px;
+  height: 4px;
+  border-radius: 50%;
+}
+
+@keyframes grainFall {
+  0% {
+    top: -6px;
+    opacity: 0;
+  }
+  8% {
+    opacity: 1;
+  }
+  85% {
+    opacity: 1;
+  }
+  100% {
+    top: calc(100% - 4px);
+    opacity: 0;
+  }
 }
 
 .timer-controls {
