@@ -6,11 +6,20 @@ import type { Skill } from '../types';
 import LevelBadge from '../components/LevelBadge';
 import GaugeBar from '../components/GaugeBar';
 
+const skillOrderOptions = [
+  { value: 'added', label: 'ALL' },
+  { value: 'most-attended', label: 'Most Attended' },
+  { value: 'least-attended', label: 'Least Attended' },
+] as const;
+
+type SkillOrder = typeof skillOrderOptions[number]['value'];
+
 const ProfilePage: React.FC = () => {
   const { user, logout, refreshUser } = useAuth();
   const navigate = useNavigate();
 
   const [skills, setSkills] = useState<Skill[]>([]);
+  const [skillOrder, setSkillOrder] = useState<SkillOrder>('added');
   const [loading, setLoading] = useState(true);
   const [isEditingUsername, setIsEditingUsername] = useState(false);
   const [newUsername, setNewUsername] = useState(user?.username || '');
@@ -45,6 +54,15 @@ const ProfilePage: React.FC = () => {
   const totalSeconds = skills.reduce((acc, s) => acc + (s.total_seconds_logged || 0), 0);
   const totalHours = (totalSeconds / 3600).toFixed(1);
   const skilledCount = skills.filter(s => (s.total_seconds_logged || 0) >= 20 * 3600).length;
+
+  const sortedSkills = [...skills].sort((first, second) => {
+    const dateOrder = Date.parse(first.created_at) - Date.parse(second.created_at);
+    const addedOrder = dateOrder || first.id - second.id;
+    if (skillOrder === 'added') return addedOrder;
+
+    const timeOrder = first.total_seconds_logged - second.total_seconds_logged;
+    return (skillOrder === 'most-attended' ? -timeOrder : timeOrder) || addedOrder;
+  });
 
   const handleUpdateUsername = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -210,14 +228,34 @@ const ProfilePage: React.FC = () => {
 
       {/* Skills Level Summary */}
       <div className="skills-summary-section">
-        <h3 className="section-title">Skills & Level Summary</h3>
+        <div className="skills-summary-header">
+          <h3 className="section-title">Skills & Level Summary</h3>
+          <fieldset
+            className="skills-summary-sort"
+            aria-label="Sort skills"
+            title="Sort by date added or total practice time"
+          >
+            {skillOrderOptions.map(({ value, label }) => (
+              <label key={value}>
+                <input
+                  type="radio"
+                  name="skill-order"
+                  value={value}
+                  checked={skillOrder === value}
+                  onChange={() => setSkillOrder(value)}
+                />
+                {label}
+              </label>
+            ))}
+          </fieldset>
+        </div>
         {loading ? (
           <div className="empty-state">Loading skills...</div>
         ) : skills.length === 0 ? (
           <div className="empty-state">No skills tracked yet.</div>
         ) : (
           <div className="summary-list">
-            {skills.map((skill) => {
+            {sortedSkills.map((skill) => {
               const hours = (skill.total_seconds_logged / 3600);
               return (
                 <div

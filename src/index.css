@@ -655,6 +655,103 @@ button {
   background: var(--primary);
 }
 
+.skill-task-list {
+  margin-top: 20px;
+  padding-inline: 16px;
+}
+
+.skill-task-list h2 {
+  margin-bottom: 12px;
+  font-size: 1rem;
+}
+
+.skill-task-form input {
+  display: block;
+  width: 100%;
+  padding: 8px 0;
+  border: 0;
+  border-bottom: 1px solid var(--text-muted);
+  border-radius: 0;
+  background: transparent;
+  font: inherit;
+  color: var(--text-main);
+}
+
+.skill-task-form input::placeholder {
+  color: var(--text-muted);
+}
+
+.skill-task-form input:focus {
+  outline: none;
+  border-bottom-color: var(--primary-hover);
+  box-shadow: 0 1px 0 var(--primary-hover);
+}
+
+.skill-task-items {
+  margin-bottom: 4px;
+  list-style: none;
+}
+
+.skill-task-items li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+}
+
+.skill-task-label {
+  position: relative;
+  display: flex;
+  flex: 1;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  min-height: 44px;
+  cursor: pointer;
+}
+
+.skill-task-label input {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  opacity: 0;
+}
+
+.skill-task-box {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  background: #000;
+  border-radius: 2px;
+}
+
+.skill-task-label input:focus-visible + .skill-task-box {
+  outline: 2px solid var(--primary-hover);
+  outline-offset: 2px;
+}
+
+.skill-task-label input:checked + .skill-task-box::after {
+  content: '';
+  width: 5px;
+  height: 9px;
+  border: solid var(--primary);
+  border-width: 0 2px 2px 0;
+  transform: translateY(-1px) rotate(45deg);
+}
+
+.skill-task-text {
+  overflow-wrap: anywhere;
+}
+
+.skill-task-remove {
+  min-width: 36px;
+  min-height: 36px;
+  color: var(--text-muted);
+  font-size: 1.25rem;
+}
+
 /* ==========================================
    Profile Page Styles
    ========================================== */
@@ -884,6 +981,44 @@ button {
 }
 
 /* Skills Summary */
+.skills-summary-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 12px;
+  margin-bottom: 12px;
+}
+
+.skills-summary-header .section-title {
+  margin-bottom: 0;
+}
+
+.skills-summary-sort {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 12px;
+  min-inline-size: 0;
+  border: 0;
+  color: var(--text-main);
+  font-size: 0.75rem;
+}
+
+.skills-summary-sort label {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  min-height: 28px;
+  cursor: pointer;
+}
+
+.skills-summary-sort input {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--primary);
+  cursor: pointer;
+}
+
 .summary-list {
   display: flex;
   flex-direction: column;

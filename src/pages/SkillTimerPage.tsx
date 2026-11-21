@@ -6,6 +6,7 @@ import { useTimer } from '../hooks/useTimer';
 import type { Skill } from '../types';
 import Timer from '../components/Timer';
 import PrioritySelector from '../components/PrioritySelector';
+import SkillTaskList from '../components/SkillTaskList';
 
 const SkillTimerPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -80,6 +81,8 @@ const SkillTimerPage: React.FC = () => {
   if (loading) return <div className="page-content">Loading timer...</div>;
   if (!skill) return <div className="page-content">Skill not found.</div>;
 
+  const checklistKey = `chronoskill:tasks:${skill.user_id}:${skill.id}:${skill.created_at}`;
+
   return (
     <div className="page-content" style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
       <header className="timer-header">
@@ -110,6 +113,7 @@ const SkillTimerPage: React.FC = () => {
 
       <div style={{ marginTop: 'auto', paddingBottom: '20px' }}>
         <PrioritySelector priority={skill.priority} onChange={handlePriorityChange} />
+        <SkillTaskList key={checklistKey} storageKey={checklistKey} />
       </div>
     </div>
   );
