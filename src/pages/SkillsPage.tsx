@@ -10,6 +10,7 @@ const SkillsPage: React.FC = () => {
   const [skills, setSkills] = useState<Skill[]>([]);
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedSkill, setSelectedSkill] = useState<Skill | null>(null);
 
   const fetchSkills = async () => {
     try {
@@ -38,14 +39,16 @@ const SkillsPage: React.FC = () => {
 
   return (
     <div className="page-content">
-   
-
       <div className="skills-grid">
         {skills.map(skill => (
           <SkillCard 
             key={skill.id} 
             skill={skill} 
             isLocked={!focusedSkillIds.includes(skill.id)}
+            onOptionClick={() => {
+              setSelectedSkill(skill);
+              setIsModalOpen(true);
+            }}
           />
         ))}
         {skills.length === 0 && (
@@ -54,11 +57,23 @@ const SkillsPage: React.FC = () => {
       </div>
       
       {/* Floating Action Button (FAB) as seen in mockups */}
-      <button className="fab-add" onClick={() => setIsModalOpen(true)}>+</button>
+      <button 
+        className="fab-add" 
+        onClick={() => {
+          setSelectedSkill(null);
+          setIsModalOpen(true);
+        }}
+      >
+        +
+      </button>
 
       <AddSkillModal
         isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
+        skillToEdit={selectedSkill}
+        onClose={() => {
+          setIsModalOpen(false);
+          setSelectedSkill(null);
+        }}
         onSuccess={fetchSkills}
       />
     </div>

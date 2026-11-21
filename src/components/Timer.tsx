@@ -1,16 +1,17 @@
 import React from 'react';
-import type { TimerState } from '../hooks/useTimer';
+import type { TimerPhase, TimerState } from '../hooks/useTimer';
 
 interface TimerProps {
   timeRemaining: number;
   focusMinutes: number;
   state: TimerState;
+  phase: TimerPhase;
   onStart: () => void;
   onPause: () => void;
   onStop: () => void;
 }
 
-const Timer: React.FC<TimerProps> = ({ timeRemaining, focusMinutes, state, onStart, onPause, onStop }) => {
+const Timer: React.FC<TimerProps> = ({ timeRemaining, focusMinutes, state, phase, onStart, onPause, onStop }) => {
   const formatTime = (seconds: number) => {
     const m = Math.floor(seconds / 60);
     const s = seconds % 60;
@@ -18,9 +19,9 @@ const Timer: React.FC<TimerProps> = ({ timeRemaining, focusMinutes, state, onSta
   };
 
   const focusTotal = focusMinutes * 60;
-  const sandTop = state === 'idle' ? 1 : state === 'break' ? 0 : timeRemaining / focusTotal;
+  const sandTop = phase === 'idle' ? 1 : phase === 'break' ? 0 : timeRemaining / focusTotal;
   const sandBottom = 1 - sandTop;
-  const sandStreaming = state === 'focus' && timeRemaining > 0 && timeRemaining < focusTotal;
+  const sandStreaming = state === 'focus' && timeRemaining > 0;
   const streamHeight = sandTop * 90;
 
   return (
@@ -46,7 +47,7 @@ const Timer: React.FC<TimerProps> = ({ timeRemaining, focusMinutes, state, onSta
               <span
                 key={i}
                 className="sand-grain"
-                style={{ '--grain-delay': `${i * 0.16}s` } as React.CSSProperties}
+                style={{ '--grain-delay': `${i * -80}ms` } as React.CSSProperties}
               />
             ))}
           </div>

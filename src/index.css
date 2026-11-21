@@ -303,7 +303,9 @@ button {
 }
 
 .tab-icon {
-  font-size: 1.5rem;
+  width: 24px;
+  height: 24px;
+  fill: var(--primary);
   margin-bottom: 2px;
 }
 
@@ -324,7 +326,7 @@ button {
 
 .gauge-segment {
   flex: 1;
-  border-radius: 2px;
+  border-radius: 999px;
   background-color: var(--border-color); /* empty */
 }
 
@@ -400,11 +402,42 @@ button {
   color: var(--text-main);
 }
 
+.skill-options-btn {
+  background: transparent;
+  border: none;
+  padding: 6px;
+  border-radius: var(--radius-sm);
+  color: var(--text-muted);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  z-index: 2;
+  position: relative;
+}
+
+.skill-options-btn:hover {
+  background-color: var(--primary-light);
+  color: var(--primary);
+}
+
 .skill-card-footer {
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
   align-items: center;
-  margin-top: 8px;
+  margin-top: 10px;
+  gap: 8px;
+}
+
+.skill-card-footer-left {
+  display: flex;
+  align-items: center;
+}
+
+.skill-card-footer-right {
+  display: flex;
+  align-items: center;
   gap: 8px;
 }
 
@@ -454,6 +487,7 @@ button {
   justify-content: center;
   font-weight: bold;
   color: var(--danger);
+  z-index: 1;
 }
 
 /* Timer Page Styles */
@@ -520,6 +554,7 @@ button {
 
 /* Sand stream: spans neck → rising sand surface in the lower chamber */
 .sand-stream {
+  --sand-stream-color: var(--primary-hover);
   position: absolute;
   left: 50%;
   top: 90px;
@@ -531,7 +566,7 @@ button {
   transition: height 1s linear;
 }
 
-/* Faint guide line connecting neck to sand pile */
+/* Guide line connecting the neck to the sand pile */
 .sand-stream::before {
   content: '';
   position: absolute;
@@ -542,9 +577,9 @@ button {
   transform: translateX(-50%);
   background: linear-gradient(
     to bottom,
-    var(--primary) 0%,
-    rgba(249, 115, 22, 0.35) 70%,
-    var(--primary) 100%
+    var(--sand-stream-color) 0%,
+    color-mix(in srgb, var(--sand-stream-color) 55%, transparent) 70%,
+    var(--sand-stream-color) 100%
   );
   border-radius: 1px;
 }
@@ -556,7 +591,8 @@ button {
   width: 4px;
   height: 6px;
   transform: translateX(-50%);
-  background: var(--primary);
+  background: var(--sand-stream-color);
+  box-shadow: 0 0 0 1px var(--primary-light);
   border-radius: 40% 40% 20% 20%;
   opacity: 0;
   animation: grainFall 0.55s linear infinite;
@@ -1001,7 +1037,8 @@ button {
   min-inline-size: 0;
   border: 0;
   color: var(--text-main);
-  font-size: 0.75rem;
+  font-size: 0.875rem;
+  font-weight: 700;
 }
 
 .skills-summary-sort label {
@@ -1013,10 +1050,23 @@ button {
 }
 
 .skills-summary-sort input {
+  appearance: none;
+  flex: none;
   width: 16px;
   height: 16px;
-  accent-color: var(--primary);
+  border: 0;
+  border-radius: 50%;
+  background: var(--bg-card);
   cursor: pointer;
+}
+
+.skills-summary-sort input:checked {
+  background: radial-gradient(circle, var(--bg-card) 0 25%, var(--primary) 30%);
+}
+
+.skills-summary-sort input:focus-visible {
+  outline: 2px solid var(--primary-hover);
+  outline-offset: 2px;
 }
 
 .summary-list {
@@ -1052,6 +1102,12 @@ button {
   font-weight: 700;
   font-size: 0.95rem;
   color: var(--text-main);
+}
+
+.summary-skill-date {
+  display: block;
+  font-size: 0.75rem;
+  color: var(--text-muted);
 }
 
 .summary-item-footer {

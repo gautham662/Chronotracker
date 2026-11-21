@@ -14,6 +14,13 @@ const skillOrderOptions = [
 
 type SkillOrder = typeof skillOrderOptions[number]['value'];
 
+const addedDateOptions: Intl.DateTimeFormatOptions = {
+  year: 'numeric',
+  month: 'short',
+  day: 'numeric',
+  timeZone: 'UTC',
+};
+
 const ProfilePage: React.FC = () => {
   const { user, logout, refreshUser } = useAuth();
   const navigate = useNavigate();
@@ -257,6 +264,7 @@ const ProfilePage: React.FC = () => {
           <div className="summary-list">
             {sortedSkills.map((skill) => {
               const hours = (skill.total_seconds_logged / 3600);
+              const addedDate = skill.created_at.slice(0, 10);
               return (
                 <div
                   key={skill.id}
@@ -264,7 +272,12 @@ const ProfilePage: React.FC = () => {
                   onClick={() => navigate(`/skills/${skill.id}`)}
                 >
                   <div className="summary-item-header">
-                    <span className="summary-skill-name">{skill.name}</span>
+                    <div>
+                      <span className="summary-skill-name">{skill.name}</span>
+                      <time className="summary-skill-date" dateTime={addedDate}>
+                        Added {new Date(addedDate).toLocaleDateString(undefined, addedDateOptions)}
+                      </time>
+                    </div>
                     <LevelBadge totalHoursLogged={hours} />
                   </div>
                   <div className="summary-item-progress">

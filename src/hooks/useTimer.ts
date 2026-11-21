@@ -1,7 +1,9 @@
 import { useState, useEffect, useRef } from 'react';
 import { api } from '../utils/api';
 
-export type TimerState = 'idle' | 'focus' | 'break' | 'paused';
+type RunningPhase = 'focus' | 'break';
+export type TimerPhase = 'idle' | RunningPhase;
+export type TimerState = TimerPhase | 'paused';
 
 interface UseTimerProps {
   skillId: number;
@@ -10,98 +12,112 @@ interface UseTimerProps {
   onSessionComplete?: () => void;
 }
 
+interface FocusSession {
+  skillId: number;
+  duration: number;
+  startedAt: string;
+}
+
 export const useTimer = ({ skillId, focusMinutes, breakMinutes, onSessionComplete }: UseTimerProps) => {
   const [state, setState] = useState<TimerState>('idle');
-  const [timeRemaining, setTimeRemaining] = useState(focusMinutes * 60);
+  const [remaining, setRemaining] = useState(0);
+  const [pausedPhase, setPausedPhase] = useState<RunningPhase>('focus');
   const timerRef = useRef<number | null>(null);
+  const focusSession = useRef<FocusSession | null>(null);
 
-  // Clear interval on unmount
   useEffect(() => {
     return () => {
       if (timerRef.current !== null) {
         window.clearInterval(timerRef.current);
+        timerRef.current = null;
       }
+      focusSession.current = null;
     };
   }, []);
 
-  const tick = () => {
-    setTimeRemaining(prev => {
-      if (prev <= 1) {
-        handlePhaseComplete();
-        return 0;
-      }
-      return prev - 1;
-    });
-  };
-
-  const handlePhaseComplete = async () => {
+  const clearCountdown = () => {
     if (timerRef.current !== null) {
       window.clearInterval(timerRef.current);
       timerRef.current = null;
     }
+  };
 
-    if (state === 'focus') {
-      // Save session to backend
-      try {
-        await api.post('/sessions', {
-          skill_id: skillId,
-          duration_seconds: focusMinutes * 60,
-          started_at: new Date(Date.now() - focusMinutes * 60 * 1000).toISOString(),
-          completed_at: new Date().toISOString(),
-          was_completed: true,
-        });
-        
-        // Transition to break
-        setState('break');
-        setTimeRemaining(breakMinutes * 60);
-        if (onSessionComplete) onSessionComplete();
-        
-      } catch (err) {
-        console.error('Failed to log session', err);
+  const runCountdown = (phase: RunningPhase, seconds: number, onElapsed: () => void) => {
+    let secondsLeft = seconds;
+    setState(phase);
+    setRemaining(secondsLeft);
+
+    timerRef.current = window.setInterval(() => {
+      secondsLeft -= 1;
+      setRemaining(secondsLeft);
+      if (secondsLeft === 0) {
+        clearCountdown();
+        onElapsed();
       }
-    } else if (state === 'break') {
-      // Transition back to idle
-      setState('idle');
-      setTimeRemaining(focusMinutes * 60);
+    }, 1000);
+  };
+
+  const finishFocus = async () => {
+    const session = focusSession.current;
+    if (!session) return;
+
+    try {
+      await api.post('/sessions', {
+        skill_id: session.skillId,
+        duration_seconds: session.duration,
+        started_at: session.startedAt,
+        completed_at: new Date().toISOString(),
+        was_completed: true,
+      });
+    } catch (err) {
+      console.error('Failed to log session', err);
+      if (focusSession.current === session) {
+        focusSession.current = null;
+        setState('idle');
+      }
+      return;
     }
+
+    // A stopped or unmounted timer no longer owns this request.
+    if (focusSession.current !== session) return;
+
+    focusSession.current = null;
+    runCountdown('break', breakMinutes * 60, () => setState('idle'));
+    onSessionComplete?.();
   };
 
   const start = () => {
-    if (state === 'idle') {
-      setState('focus');
-      setTimeRemaining(focusMinutes * 60);
-    } else if (state === 'paused') {
-      setState('focus'); // Assuming we only pause during focus for now
-    }
-    
-    if (timerRef.current === null) {
-      timerRef.current = window.setInterval(tick, 1000);
+    if (state === 'idle' && timerRef.current === null) {
+      const duration = focusMinutes * 60;
+      focusSession.current = { skillId, duration, startedAt: new Date().toISOString() };
+      runCountdown('focus', duration, finishFocus);
+    } else if (state === 'paused' && timerRef.current === null) {
+      if (pausedPhase === 'break') {
+        runCountdown('break', remaining, () => setState('idle'));
+      } else {
+        runCountdown('focus', remaining, finishFocus);
+      }
     }
   };
 
   const pause = () => {
-    if (timerRef.current !== null) {
-      window.clearInterval(timerRef.current);
-      timerRef.current = null;
-    }
+    if (timerRef.current === null || (state !== 'focus' && state !== 'break')) return;
+
+    clearCountdown();
+    setPausedPhase(state);
     setState('paused');
   };
 
   const stop = () => {
-    if (timerRef.current !== null) {
-      window.clearInterval(timerRef.current);
-      timerRef.current = null;
-    }
-    
-    // We could log partial time here if required, skipping for simplicity in this MVP iteration
-    
+    clearCountdown();
+    focusSession.current = null;
     setState('idle');
-    setTimeRemaining(focusMinutes * 60);
   };
 
   return {
     state,
-    timeRemaining,
+    phase: state === 'paused' ? pausedPhase : state,
+    timeRemaining: state === 'idle' ? focusMinutes * 60 : remaining,
     start,
     pause,
     stop,

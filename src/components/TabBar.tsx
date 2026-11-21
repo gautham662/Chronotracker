@@ -13,7 +13,9 @@ const TabBar: React.FC = () => {
         to="/skills" 
         className={({ isActive }) => `tab-item ${isActive ? 'active' : ''}`}
       >
-        <span className="tab-icon">🏠</span>
+        <svg className="tab-icon" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M12 3 2 11h2v10h6v-6h4v6h6V11h2L12 3Z" />
+        </svg>
         <span className="tab-label">Skills Dashboard</span>
       </NavLink>
       
@@ -21,7 +23,10 @@ const TabBar: React.FC = () => {
         to="/profile" 
         className={({ isActive }) => `tab-item ${isActive ? 'active' : ''}`}
       >
-        <span className="tab-icon">👥</span>
+        <svg className="tab-icon" viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="12" cy="7" r="4" />
+          <path d="M4 21v-2a8 6 0 0 1 16 0v2H4Z" />
+        </svg>
         <span className="tab-label">Profile</span>
       </NavLink>
     </nav>

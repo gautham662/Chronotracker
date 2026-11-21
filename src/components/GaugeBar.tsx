@@ -12,7 +12,7 @@ const GaugeBar: React.FC<GaugeBarProps> = ({ totalHoursLogged }) => {
   
   // As per design, the gauge is represented by many vertical segments.
   // We'll approximate this by generating an array of segments.
-  const totalSegments = 30; 
+  const totalSegments = 50; 
   const filledSegments = Math.floor((percentage / 100) * totalSegments);
 
   return (

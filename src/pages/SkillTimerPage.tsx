@@ -51,7 +51,7 @@ const SkillTimerPage: React.FC = () => {
     fetchSkillData();
   }, [id, user, navigate]);
 
-  const { state, timeRemaining, start, pause, stop } = useTimer({
+  const { state, phase, timeRemaining, start, pause, stop } = useTimer({
     skillId: Number(id),
     focusMinutes: skill?.focus_minutes || 25,
     breakMinutes: skill?.break_minutes || 5,
@@ -103,6 +103,7 @@ const SkillTimerPage: React.FC = () => {
           <Timer 
             timeRemaining={timeRemaining}
             focusMinutes={skill.focus_minutes}
+            phase={phase}
             state={state} 
             onStart={start} 
             onPause={pause} 

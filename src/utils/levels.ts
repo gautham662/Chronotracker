@@ -24,7 +24,7 @@ export const getLevel = (totalHoursLogged: number): LevelInfo => {
   }
 
   return {
-    ...currentLevel,
+      ...currentLevel,
     nextLevelName: nextLevel?.name,
     nextLevelHours: nextLevel?.minHours,
   };
