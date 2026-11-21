@@ -1110,6 +1110,39 @@ button {
   color: var(--text-muted);
 }
 
+.summary-milestones {
+  border-block: 1px solid var(--border-color);
+  padding-block: 8px;
+  font-size: 0.8125rem;
+}
+
+.summary-milestones h4 {
+  margin-bottom: 4px;
+}
+
+.summary-milestones ul {
+  display: grid;
+  gap: 4px;
+  list-style: none;
+}
+
+.summary-milestones li {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 2px 12px;
+}
+
+.summary-milestones li > :last-child,
+.summary-next-level {
+  color: var(--text-muted);
+  font-size: 0.75rem;
+}
+
+.summary-next-level {
+  text-align: right;
+}
+
 .summary-item-footer {
   display: flex;
   justify-content: space-between;

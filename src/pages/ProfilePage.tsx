@@ -2,9 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import { api } from '../utils/api';
-import type { Skill } from '../types';
+import type { Session, Skill } from '../types';
 import LevelBadge from '../components/LevelBadge';
-import GaugeBar from '../components/GaugeBar';
+import { getMilestoneProgress } from '../utils/levels';
+import { getAchievedMilestones } from '../utils/milestones';
 
 const skillOrderOptions = [
   { value: 'added', label: 'ALL' },
@@ -21,11 +22,15 @@ const addedDateOptions: Intl.DateTimeFormatOptions = {
   timeZone: 'UTC',
 };
 
+const formatDate = (date: string) =>
+  new Date(date.slice(0, 10)).toLocaleDateString(undefined, addedDateOptions);
+
 const ProfilePage: React.FC = () => {
   const { user, logout, refreshUser } = useAuth();
   const navigate = useNavigate();
 
   const [skills, setSkills] = useState<Skill[]>([]);
+  const [sessionsBySkill, setSessionsBySkill] = useState<Map<number, Session[]>>();
   const [skillOrder, setSkillOrder] = useState<SkillOrder>('added');
   const [loading, setLoading] = useState(true);
   const [isEditingUsername, setIsEditingUsername] = useState(false);
@@ -55,6 +60,25 @@ const ProfilePage: React.FC = () => {
       }
     };
     fetchSkills();
+  }, []);
+
+  useEffect(() => {
+    const controller = new AbortController();
+    api.get<Session[]>('/sessions', { signal: controller.signal }).then(({ data }) => {
+      if (controller.signal.aborted) return;
+      const grouped = new Map<number, Session[]>();
+      for (const session of data) {
+        const sessions = grouped.get(session.skill_id);
+        if (sessions) sessions.push(session);
+        else grouped.set(session.skill_id, [session]);
+      }
+      setSessionsBySkill(grouped);
+    }).catch(error => {
+      if (controller.signal.aborted) return;
+      console.error('Failed to load skill milestone history:', error);
+      setSessionsBySkill(new Map());
+    });
+    return () => controller.abort();
   }, []);
 
   // Compute overall stats
@@ -265,6 +289,8 @@ const ProfilePage: React.FC = () => {
             {sortedSkills.map((skill) => {
               const hours = (skill.total_seconds_logged / 3600);
               const addedDate = skill.created_at.slice(0, 10);
+              const { percentage, nextLevel } = getMilestoneProgress(hours);
+              const milestones = getAchievedMilestones(skill, sessionsBySkill?.get(skill.id) ?? []);
               return (
                 <div
                   key={skill.id}
@@ -275,14 +301,29 @@ const ProfilePage: React.FC = () => {
                     <div>
                       <span className="summary-skill-name">{skill.name}</span>
                       <time className="summary-skill-date" dateTime={addedDate}>
-                        Added {new Date(addedDate).toLocaleDateString(undefined, addedDateOptions)}
+                        Added {formatDate(addedDate)}
                       </time>
                     </div>
                     <LevelBadge totalHoursLogged={hours} />
                   </div>
-                  <div className="summary-item-progress">
-                    <GaugeBar totalHoursLogged={hours} targetHours={skill.target_hours} />
+                  <div className="summary-milestones">
+                    <h4>Milestones</h4>
+                    <ul>
+                      {milestones.map(({ name, date }) => (
+                        <li key={name}>
+                          <span>{name}</span>
+                          {date ? (
+                            <time dateTime={date.slice(0, 10)}>Achieved {formatDate(date)}</time>
+                          ) : (
+                            <span>{sessionsBySkill ? 'Date unavailable' : 'Loading date…'}</span>
+                          )}
+                        </li>
+                      ))}
+                    </ul>
                   </div>
+                  <p className="summary-next-level">
+                    {nextLevel ? `${Math.round(percentage)}% to ${nextLevel}` : 'Max Level'}
+                  </p>
                   <div className="summary-item-footer">
                     <span>Priority: {skill.priority}</span>
                     <span>{hours.toFixed(1)} / {skill.target_hours}h</span>
