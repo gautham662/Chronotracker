@@ -10,11 +10,16 @@ import SkillTimerPage from './pages/SkillTimerPage';
 import ProfilePage from './pages/ProfilePage';
 import './App.css';
 
-// Layout with TabBar
-const MainLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => (
-  <div className="app-container">
+interface ScreenLayoutProps {
+  children: React.ReactNode;
+  variant?: 'auth' | 'tabs';
+}
+
+const ScreenLayout: React.FC<ScreenLayoutProps> = ({ children, variant }) => (
+  <div className={variant ? `app-container app-container--${variant}` : 'app-container'}>
+    <div className="screen-hourglass" aria-hidden="true" />
     {children}
-    <TabBar />
+    {variant === 'tabs' && <TabBar />}
   </div>
 );
 
@@ -24,14 +29,14 @@ const App: React.FC = () => {
       <BrowserRouter>
         <Routes>
           {/* Public Auth Routes */}
-          <Route path="/signup" element={<SignupPage />} />
-          <Route path="/login" element={<LoginPage />} />
+          <Route path="/signup" element={<ScreenLayout variant="auth"><SignupPage /></ScreenLayout>} />
+          <Route path="/login" element={<ScreenLayout variant="auth"><LoginPage /></ScreenLayout>} />
 
            {/* Protected Routes */}
           <Route element={<ProtectedRoute />}>
-            <Route path="/skills" element={<MainLayout><SkillsPage /></MainLayout>} />
-            <Route path="/skills/:id" element={<div className="app-container"><SkillTimerPage /></div>} />
-            <Route path="/profile" element={<MainLayout><ProfilePage /></MainLayout>} />
+            <Route path="/skills" element={<ScreenLayout variant="tabs"><SkillsPage /></ScreenLayout>} />
+            <Route path="/skills/:id" element={<ScreenLayout><SkillTimerPage /></ScreenLayout>} />
+            <Route path="/profile" element={<ScreenLayout variant="tabs"><ProfilePage /></ScreenLayout>} />
           </Route>
 
           {/* Default Redirect */}

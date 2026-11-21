@@ -46,7 +46,11 @@ const SignupPage: React.FC = () => {
   return (
     <div className="auth-page">
       <div className="auth-header">
-        <h1 className="app-title">Chrono Skill</h1>
+        <h1 className="app-title" aria-label="ChronoSkill">
+          <span>Chrono</span>
+          <span className="app-title-logo" aria-hidden="true" />
+          <span>Skill</span>
+        </h1>
         <h2 className="welcome-text">Welcome to<br/>Chrono Skill</h2>
       </div>
 
@@ -86,15 +90,9 @@ const SignupPage: React.FC = () => {
         </div>
 
         <div className="auth-actions">
-          <div className="icon-btn-placeholder">
-             <div className="circle-btn">🏠</div>
-          </div>
           <button type="submit" className="btn-primary auth-submit" disabled={loading}>
             {loading ? '...' : 'Sign Up'}
           </button>
-          <div className="icon-btn-placeholder">
-             <div className="circle-btn">👥</div>
-          </div>
         </div>
       </form>
 
