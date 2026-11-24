@@ -1,7 +1,7 @@
 import React, { createContext, useState, useEffect } from 'react';
 import type { ReactNode } from 'react';
 import type { User } from '../types';
-import { api } from '../utils/api';
+import { api, revokeLocalSession } from '../utils/api';
 
 // 10,000-Foot View:
 // Auth Context managing persistent login sessions via JWT token stored in localStorage,
@@ -58,6 +58,12 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   };
 
   const logout = () => {
+    const activeToken = localStorage.getItem('token');
+    if (activeToken) {
+      void revokeLocalSession(activeToken).catch(error => {
+        console.error('Failed to revoke local session:', error);
+      });
+    }
     localStorage.removeItem('token');
     setToken(null);
     setUser(null);
